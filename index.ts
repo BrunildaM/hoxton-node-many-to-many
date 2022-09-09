@@ -36,6 +36,10 @@ const createNewApplicant = db.prepare(`
 INSERT INTO applicants (name, email) VALUES (@name, @email);
 `)
 
+const updateApplicant = db.prepare(`
+UPDATE FROM applicants SET name = ? email = ? WHERE id = ?;
+`)
+
 
 // interviewers queries
 const getAllInterviewers = db.prepare(`
@@ -125,6 +129,26 @@ app.post('/applicants', (req, res) => {
     } else{
         res.status(400).send({  error: errors   });
     }
+})
+
+
+app.patch('/applicants/:id', (req, res) => {
+
+    const id = req.params.id
+    const {name, email} = req.body
+
+    const applicant = getApplicantById.get(id)
+
+    if (applicant) {
+       
+        updateApplicant.run(name, email)
+        res.send(applicant)
+
+    } else {
+        res.status(404).send({error: 'Applicant not found.'})
+    }
+
+
 })
 
 // interviewers
